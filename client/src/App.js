@@ -8,12 +8,11 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
-import { userDatas } from "./mockData";
 
-const styles = (theme) => ({
+const styles = () => ({
   root: {
     width: "100%",
-    marginTop: theme.spacing.unit * 3,
+    marginTop: "10px",
     overflowX: "auto", // x축으로 overflow가 발생 할 수 있도록
   },
   table: {
@@ -22,7 +21,22 @@ const styles = (theme) => ({
 });
 
 class App extends PureComponent {
+  state = {
+    customers: "",
+  };
+  componentDidMount() {
+    this.callApi()
+      .then((res) => this.setState({ customers: res }))
+      .catch((err) => console.log(err));
+  }
+  callApi = async () => {
+    const res = await fetch("/api/customers");
+    const body = await res.json();
+    return body;
+  };
+
   render() {
+    const { customers } = this.state;
     const { classes } = this.props;
     return (
       <Paper className={classes.root}>
@@ -38,19 +52,21 @@ class App extends PureComponent {
             </TableRow>
           </TableHead>
           <TableBody>
-            {userDatas.map((v) => {
-              return (
-                <Customer
-                  key={v.name}
-                  id={v.id}
-                  name={v.name}
-                  current={v.current}
-                  account={v.account}
-                  state={v.state}
-                  image={v.image}
-                />
-              );
-            })}
+            {customers
+              ? customers.map((v) => {
+                  return (
+                    <Customer
+                      key={v.name}
+                      id={v.id}
+                      name={v.name}
+                      current={v.current}
+                      account={v.account}
+                      state={v.state}
+                      image={v.image}
+                    />
+                  );
+                })
+              : ""}
           </TableBody>
         </Table>
       </Paper>
