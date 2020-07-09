@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import "./App.css";
 import Customer from "./components/Customer";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableCell from "@material-ui/core/TableCell";
@@ -10,32 +10,45 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import CustomerAdd from "./components/CustomerAdd";
 
-const StyledTable = withStyles(() => ({
+class Loading extends PureComponent {
+  render() {
+    const { progress } = this.props;
+    return (
+      <TableRow>
+        <TableCell colSpan="6" align="center">
+          <CircularProgress variant="static" value={progress} />
+        </TableCell>
+      </TableRow>
+    );
+  }
+}
+
+const styles = (theme) => ({
   table: {
-    minWidth: 1080,
+    minWidth: 700,
   },
-}))(Table);
-
-const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
   },
-}))(TableCell);
+});
 
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
-
-export default class App extends PureComponent {
+class App extends PureComponent {
   state = {
     customers: "",
     progress: 0,
+  };
+
+  stateRefresh = () => {
+    this.setState({
+      customers: "",
+      progress: 0,
+    });
+    this.callApi()
+      .then((res) => this.setState({ customers: res }))
+      .catch((err) => console.log(err));
   };
 
   timer = () => {
@@ -59,47 +72,49 @@ export default class App extends PureComponent {
 
   render() {
     const { customers } = this.state;
+    const { classes } = this.props;
     return (
-      <TableContainer style={{ marginTop: "10px" }} component={Paper}>
-        <StyledTable>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>번호</StyledTableCell>
-              <StyledTableCell>이미지</StyledTableCell>
-              <StyledTableCell>상품명</StyledTableCell>
-              <StyledTableCell>최소가</StyledTableCell>
-              <StyledTableCell>최대가</StyledTableCell>
-              <StyledTableCell>보관상태</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {customers ? (
-              customers.map((v) => {
-                return (
-                  <Customer
-                    key={v.name}
-                    id={v.id}
-                    name={v.name}
-                    current={v.current}
-                    account={v.account}
-                    state={v.state}
-                    image={v.image}
-                  />
-                );
-              })
-            ) : (
+      <div>
+        <TableContainer component={Paper}>
+          <Table className={classes.table}>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan="6" align="center">
-                  <CircularProgress
-                    variant="static"
-                    value={this.state.progress}
-                  />
-                </TableCell>
+                <TableCell className={classes.head}>번호</TableCell>
+                <TableCell className={classes.head}>이미지</TableCell>
+                <TableCell className={classes.head}>상품명</TableCell>
+                <TableCell className={classes.head}>최소가</TableCell>
+                <TableCell className={classes.head}>최대가</TableCell>
+                <TableCell className={classes.head}>보관상태</TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </StyledTable>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {customers ? (
+                customers.map((v) => {
+                  return (
+                    <Customer
+                      key={v.name}
+                      id={v.id}
+                      name={v.name}
+                      current={v.current}
+                      account={v.account}
+                      state={v.state}
+                      image={v.image}
+                    />
+                  );
+                })
+              ) : (
+                <Loading progress={this.state.progress} />
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <CustomerAdd stateRefresh={this.stateRefresh} />
+      </div>
     );
   }
 }
+export default withStyles(styles)(App);
+
+// express => mysql => font 작업 후
+// redux 연결해서 pagination 구현 예정
