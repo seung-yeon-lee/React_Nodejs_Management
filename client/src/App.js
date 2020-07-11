@@ -11,6 +11,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CustomerAdd from "./components/CustomerAdd";
+import axios from "axios";
 
 class Loading extends PureComponent {
   render() {
@@ -85,6 +86,7 @@ class App extends PureComponent {
                 <TableCell className={classes.head}>최소가</TableCell>
                 <TableCell className={classes.head}>최대가</TableCell>
                 <TableCell className={classes.head}>보관상태</TableCell>
+                <TableCell className={classes.head}>설정</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -99,6 +101,7 @@ class App extends PureComponent {
                       account={v.account}
                       state={v.state}
                       image={v.image}
+                      stateRefresh={this.stateRefresh}
                     />
                   );
                 })

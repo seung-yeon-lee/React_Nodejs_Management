@@ -22,7 +22,7 @@ const upload = multer({ dest: "./upload" });
 app.use("/image", express.static("./upload"));
 
 app.post("/api/customers", upload.single("image"), (req, res) => {
-  let sql = "INSERT INTO CUSTOMER VALUES(null, ?,?,?,?,?)";
+  let sql = "INSERT INTO CUSTOMER VALUES(null, ?,?,?,?,?,now(),0)";
   let image = "http://localhost:5000/image/" + req.file.filename;
   let name = req.body.name;
   let current = req.body.current;
@@ -36,8 +36,16 @@ app.post("/api/customers", upload.single("image"), (req, res) => {
 });
 
 app.get("/api/customers", (req, res) => {
-  db.query("SELECT * FROM CUSTOMER", (err, rows, fileds) => {
+  db.query("SELECT * FROM CUSTOMER WHERE isDeleted= 0", (err, rows, fileds) => {
     if (err) console.log(err);
+    res.send(rows);
+  });
+});
+
+app.delete("/api/customers/:id", (req, res) => {
+  let sql = "UPDATE CUSTOMER SET isDeleted = 1 WHERE id= ?";
+  let params = [req.params.id];
+  db.query(sql, params, (err, rows) => {
     res.send(rows);
   });
 });
