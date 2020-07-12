@@ -41,7 +41,7 @@ class Customer extends PureComponent {
         <StyledTableCell>{account}</StyledTableCell>
         <StyledTableCell>{state}</StyledTableCell>
         <StyledTableCell>
-          <CustomerDelete id={id} stateRefresh={stateRefresh} />
+          <CustomerDelete id={id} name={name} stateRefresh={stateRefresh} />
         </StyledTableCell>
       </StyledTableRow>
     );

@@ -38,13 +38,14 @@ const styles = (theme) => ({
 
 class App extends PureComponent {
   state = {
-    customers: "",
+    customers: [],
     progress: 0,
+    result: "",
   };
 
   stateRefresh = () => {
     this.setState({
-      customers: "",
+      customers: [],
       progress: 0,
     });
     this.callApi()
@@ -102,6 +103,7 @@ class App extends PureComponent {
                       state={v.state}
                       image={v.image}
                       stateRefresh={this.stateRefresh}
+                      result={this.state.result}
                     />
                   );
                 })
@@ -111,7 +113,6 @@ class App extends PureComponent {
             </TableBody>
           </Table>
         </TableContainer>
-
         <CustomerAdd stateRefresh={this.stateRefresh} />
       </div>
     );
