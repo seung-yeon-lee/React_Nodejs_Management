@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 
 class CustomerDelete extends PureComponent {
   state = { open: false };
+
   deleteCustomer = (id) => {
     const { stateRefresh } = this.props;
     const url = "/api/customers/" + id;

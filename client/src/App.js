@@ -11,7 +11,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CustomerAdd from "./components/CustomerAdd";
-import axios from "axios";
+import AppNav from "./components/AppBar";
 
 class Loading extends PureComponent {
   render() {
@@ -19,6 +19,7 @@ class Loading extends PureComponent {
     return (
       <TableRow>
         <TableCell colSpan="6" align="center">
+          <div>데이터를 불러오는중...</div>
           <CircularProgress variant="static" value={progress} />
         </TableCell>
       </TableRow>
@@ -27,20 +28,38 @@ class Loading extends PureComponent {
 }
 
 const styles = (theme) => ({
-  table: {
-    minWidth: 700,
+  root: {
+    width: "100%",
+    minWidth: 1080,
+  },
+  papers: {
+    marginRight: 10,
+    marginLeft: 10,
+    [theme.breakpoints.up("sm")]: {
+      display: "flex",
+      flexDirection: "column",
+      width: "auto",
+    },
+  },
+  menu: {
+    margin: "15px 10px",
+    display: "flex",
+    justifyContent: "center",
   },
   head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: "silver",
+    color: theme.palette.common.black,
+    fontSize: "1.0rem",
   },
 });
 
 class App extends PureComponent {
   state = {
-    customers: [],
+    customers: "",
     progress: 0,
     result: "",
+    searchKeyword: "",
+    name: "",
   };
 
   stateRefresh = () => {
@@ -60,8 +79,12 @@ class App extends PureComponent {
       }));
     }, 200);
   };
+  handleFilterChange = (e) => {
+    this.setState({ name: e.target.value });
+    console.log(this.state.name);
+  };
   componentDidMount() {
-    this.timer();
+    // this.timer();
     this.callApi()
       .then((res) => this.setState({ customers: res }))
       .catch((err) => console.log(err));
@@ -73,47 +96,65 @@ class App extends PureComponent {
   };
 
   render() {
+    const filteredComponent = (data) => {
+      let result = data.filter((c) => {
+        return c.name.indexOf(this.state.searchKeyword) > -1;
+      });
+      return result.map((v) => {
+        return (
+          <Customer
+            key={v.name}
+            id={v.id}
+            name={v.name}
+            current={v.current}
+            account={v.account}
+            state={v.state}
+            image={v.image}
+            stateRefresh={this.stateRefresh}
+          />
+        );
+      });
+    };
     const { customers } = this.state;
     const { classes } = this.props;
+    const CellList = [
+      "번호",
+      "이미지",
+      "상품명",
+      "최소가",
+      "최대가",
+      "보관상태",
+      "설정",
+    ];
     return (
-      <div>
-        <TableContainer component={Paper}>
-          <Table className={classes.table}>
+      <div className={classes.root}>
+        <AppNav
+          name={this.state.name}
+          value={this.state.searchKeyword}
+          onChange={this.handleFilterChange}
+        />
+        <div className={classes.menu}>
+          <CustomerAdd stateRefresh={this.stateRefresh} />
+        </div>
+
+        <Paper className={classes.papers}>
+          <Table>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.head}>번호</TableCell>
-                <TableCell className={classes.head}>이미지</TableCell>
-                <TableCell className={classes.head}>상품명</TableCell>
-                <TableCell className={classes.head}>최소가</TableCell>
-                <TableCell className={classes.head}>최대가</TableCell>
-                <TableCell className={classes.head}>보관상태</TableCell>
-                <TableCell className={classes.head}>설정</TableCell>
+                {CellList.map((c) => {
+                  return <TableCell className={classes.head}>{c}</TableCell>;
+                })}
               </TableRow>
             </TableHead>
             <TableBody>
               {customers ? (
-                customers.map((v) => {
-                  return (
-                    <Customer
-                      key={v.name}
-                      id={v.id}
-                      name={v.name}
-                      current={v.current}
-                      account={v.account}
-                      state={v.state}
-                      image={v.image}
-                      stateRefresh={this.stateRefresh}
-                      result={this.state.result}
-                    />
-                  );
-                })
+                filteredComponent(customers)
               ) : (
                 <Loading progress={this.state.progress} />
               )}
             </TableBody>
           </Table>
-        </TableContainer>
-        <CustomerAdd stateRefresh={this.stateRefresh} />
+        </Paper>
       </div>
     );
   }

@@ -94,7 +94,7 @@ class CustomerAdd extends PureComponent {
           상품 등록하기
         </Button>
         <Dialog open={this.state.open} onClose={this.handleClose}>
-          <DialogTitle style={{ textAlign: "center", color: "skyblue" }}>
+          <DialogTitle style={{ textAlign: "center", color: "gray" }}>
             상품 등록
           </DialogTitle>
           <DialogContent>
@@ -107,7 +107,12 @@ class CustomerAdd extends PureComponent {
               onChange={this.handleFileChange}
             />
             <label htmlFor="raised-button-file">
-              <Button variant="contained" name="file" component="span">
+              <Button
+                variant="contained"
+                color="primary"
+                name="file"
+                component="span"
+              >
                 {fileName === "" ? "상품 이미지 선택하기" : fileName}
               </Button>
             </label>
