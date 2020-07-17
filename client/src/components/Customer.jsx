@@ -3,6 +3,7 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import { TableRow } from "@material-ui/core";
 import TableCell from "@material-ui/core/TableCell";
 import CustomerDelete from "./CustomerDelete";
+import CustomerUpdate from "./CustomerUpdate";
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
@@ -42,6 +43,7 @@ class Customer extends PureComponent {
         <StyledTableCell>{state}</StyledTableCell>
         <StyledTableCell>
           <CustomerDelete id={id} name={name} stateRefresh={stateRefresh} />
+          <CustomerUpdate id={id} stateRefresh={stateRefresh} />
         </StyledTableCell>
       </StyledTableRow>
     );
