@@ -7,11 +7,12 @@ import axios from "axios";
 import AddExample from "./components/AddExample";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import CustomerTable from "./components/CustomerTable";
+import RouteTest from "./components/hocTest";
+import Post from "./components/Post";
 
 const styles = (theme) => ({
   root: {
     width: "100%",
-    minWidth: 1080,
   },
   papers: {
     marginRight: 10,
@@ -100,6 +101,10 @@ class App extends PureComponent {
         <Switch>
           <Route path="/" exact render={() => <CustomerTable />} />
           <Route path="/todo" component={AddExample} />
+        </Switch>
+        <Switch>
+          <Route path="/route" component={RouteTest} />
+          <Route path="/:post_id" component={Post} />
         </Switch>
       </Router>
     );
