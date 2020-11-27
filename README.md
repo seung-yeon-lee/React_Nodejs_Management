@@ -1,3 +1,3 @@
 # React_Nodejs_Management
 
-NodeJS & React &  Mysql을 이용한 매니지먼트 앱
+React, React-Router, redux, axios, nodejs, mysql 을 이용한 간단한 고객관리 페이지 구현(초기버전)
